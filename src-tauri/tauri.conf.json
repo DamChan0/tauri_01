@@ -4,22 +4,16 @@
   "version": "0.1.0",
   "identifier": "com.damchan.idlegui-tauri",
   "build": {
-    "beforeDevCommand": "npm run dev",
-    "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "npm run build",
-    "frontendDist": "../dist"
+    "beforeDevCommand": "vite",            
+    "devUrl": "http://localhost:1420",    
+    "beforeBuildCommand": "vite build",    
+    "frontendDist": "../dist"              
   },
   "app": {
     "windows": [
-      {
-        "title": "idlegui-tauri",
-        "width": 800,
-        "height": 600
-      }
+      { "title": "UI Mini Lab", "width": 900, "height": 700 }
     ],
-    "security": {
-      "csp": null
-    }
+    "security": { "csp": null }            
   },
   "bundle": {
     "active": true,
