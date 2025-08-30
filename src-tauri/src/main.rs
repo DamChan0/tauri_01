@@ -11,6 +11,8 @@ struct UiState {
     level: String,
 }
 
+type Shared<T> = Arc<Mutex<T>>;
+
 impl Default for UiState {
     fn default() -> Self {
         Self {
@@ -33,14 +35,14 @@ fn get_color(state: State<Arc<Mutex<UiState>>>) -> Result<String, String> {
 fn set_color(
     state: State<Arc<Mutex<UiState>>>,
     app: tauri::AppHandle,
-    setting_color: String,
+    set_color: String,
 ) -> String {
     {
         let mut state = state.lock().unwrap();
-        state.color = setting_color.clone();
+        state.color = set_color.clone();
     }
-    let _ = app.emit("color_changed", &setting_color);
-    setting_color
+    let _ = app.emit("color_changed", &set_color);
+    set_color
 }
 
 #[tauri::command]

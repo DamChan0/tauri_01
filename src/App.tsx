@@ -1,51 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
+import { api } from "./lib/tauri";
 import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
 
-function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+export default function App() {
+  const [color, setColor] = useState<string>("#22c55e");
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+  useEffect(() => {
+    api.getColor().then(setColor);
+    const off = api.onColorChanged(setColor);
+    return () => {
+      off.then((un) => un());
+    };
+  }, []);
+
+  const apply = (c: string) => {
+    setColor(c);
+    api.setColor(c).catch(() => api.getColor().then(setColor));
+  };
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
+    <div style={{ padding: 16 }}>
+      <h2>색상 수련장</h2>
 
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
+      <div
+        style={{
+          width: 200,
+          height: 120,
+          border: "1px solid #ccc",
+          background: color,
+          marginBottom: 12,
         }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+      />
+
+      <input type="color" value={color} onChange={(e) => apply(e.target.value)} />
+
+      <button style={{ marginLeft: 8 }} onClick={() => apply("#3b82f6")}>
+        푸른 기 주입
+      </button>
+      <button style={{ marginLeft: 8 }} onClick={() => apply("#ef4444")}>
+        붉은 기 주입
+      </button>
+    </div>
   );
 }
-
-export default App;
